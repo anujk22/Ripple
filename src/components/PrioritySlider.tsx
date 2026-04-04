@@ -8,12 +8,12 @@ export default function PrioritySlider({ priority, onChange }: PrioritySliderPro
 
   return (
     <div>
-      <div className="text-[10px] font-semibold tracking-[0.15em] uppercase text-neutral-500 mb-3">
+      <div className="text-[10px] font-semibold tracking-[0.15em] uppercase text-slate-400 mb-3">
         Stakeholder Priority
       </div>
       <div className="flex justify-between mb-2">
-        <span className="text-[11px] text-neutral-500">🛡️ Safety</span>
-        <span className="text-[11px] text-neutral-500">Quality of Life 🌿</span>
+        <span className="text-[11px] text-slate-500">🛡️ Safety</span>
+        <span className="text-[11px] text-slate-500">Quality of Life 🌿</span>
       </div>
       <input
         type="range"
@@ -24,7 +24,7 @@ export default function PrioritySlider({ priority, onChange }: PrioritySliderPro
         aria-label="Stakeholder priority"
         className="w-full"
       />
-      <div className="text-center mt-2 text-xs text-neutral-400">{label}</div>
+      <div className="text-center mt-2 text-xs text-slate-500">{label}</div>
     </div>
   )
 }

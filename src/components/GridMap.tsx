@@ -14,11 +14,11 @@ interface GridMapProps {
 export default function GridMap({ displayGrid }: GridMapProps) {
   return (
     <div>
-      <div className="text-[10px] font-semibold tracking-[0.15em] uppercase text-neutral-500 mb-3">
+      <div className="text-[10px] font-semibold tracking-[0.15em] uppercase text-slate-400 mb-3">
         Neighborhood Map
       </div>
       <div
-        className="grid gap-[2px] p-2 bg-black/40 rounded-lg"
+        className="grid gap-0.5 p-1.5 bg-black/[0.04] rounded-lg"
         style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}
       >
         {displayGrid.map((row, ri) =>
@@ -29,8 +29,8 @@ export default function GridMap({ displayGrid }: GridMapProps) {
             return (
               <div
                 key={`${ri}-${ci}`}
-                className="aspect-square flex items-center justify-center rounded relative text-xl
-                           border border-transparent hover:border-white/20 hover:scale-105
+                className="aspect-square flex items-center justify-center rounded relative text-base sm:text-lg
+                           border border-transparent hover:border-black/10 hover:scale-105
                            transition-all duration-200 cursor-default group"
                 style={{ backgroundColor: tileInfo.color }}
               >
@@ -42,9 +42,10 @@ export default function GridMap({ displayGrid }: GridMapProps) {
                 )}
                 {/* Tooltip */}
                 <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5
-                                 bg-neutral-900 text-white text-[10px] px-2 py-0.5 rounded
+                                 bg-white text-slate-800 text-[10px] px-2 py-0.5 rounded
                                  whitespace-nowrap opacity-0 group-hover:opacity-100
-                                 transition-opacity pointer-events-none border border-neutral-700 z-10">
+                                 transition-opacity pointer-events-none border border-black/10 z-10
+                                 shadow-sm">
                   {tileInfo.label}{cell.overlay ? ' ✦' : ''}
                 </span>
               </div>
@@ -56,9 +57,9 @@ export default function GridMap({ displayGrid }: GridMapProps) {
       {/* Legend */}
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
         {(['road', 'housing', 'park', 'empty', 'water', 'commercial'] as TileType[]).map((t) => (
-          <div key={t} className="flex items-center gap-1.5 text-[11px] text-neutral-500">
+          <div key={t} className="flex items-center gap-1.5 text-[11px] text-slate-500">
             <div
-              className="w-3 h-3 rounded-sm border border-white/10"
+              className="w-3 h-3 rounded-sm border border-black/10"
               style={{ backgroundColor: TILE_TYPES[t].color }}
             />
             <span>{TILE_TYPES[t].label}</span>

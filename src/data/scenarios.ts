@@ -8,12 +8,12 @@ export interface TileInfo {
 }
 
 export const TILE_TYPES: Record<TileType, TileInfo> = {
-  road:       { label: 'Road',       emoji: '🛣️', color: '#1a1a1a' },
-  housing:    { label: 'Housing',    emoji: '🏠', color: '#1f1f1f' },
-  park:       { label: 'Park',       emoji: '🌳', color: '#1c2c1c' },
-  empty:      { label: 'Empty Lot',  emoji: '⬜', color: '#151515' },
-  water:      { label: 'Water',      emoji: '🌊', color: '#0d1b2a' },
-  commercial: { label: 'Commercial', emoji: '🏪', color: '#2a2a1a' },
+  road:       { label: 'Road',       emoji: '🛣️', color: 'rgba(0,0,0,0.04)' },
+  housing:    { label: 'Housing',    emoji: '🏠', color: 'rgba(0,0,0,0.06)' },
+  park:       { label: 'Park',       emoji: '🌳', color: 'rgba(16, 185, 129, 0.12)' },
+  empty:      { label: 'Empty Lot',  emoji: '⬜', color: 'rgba(0,0,0,0.02)' },
+  water:      { label: 'Water',      emoji: '🌊', color: 'rgba(59, 130, 246, 0.1)' },
+  commercial: { label: 'Commercial', emoji: '🏪', color: 'rgba(0,0,0,0.08)' },
 };
 
 export interface Indices {
