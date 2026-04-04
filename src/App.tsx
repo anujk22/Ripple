@@ -81,10 +81,10 @@ export default function App() {
             
             <a
               href="#report"
-              className="mt-6 flex items-center gap-2 group transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="mt-6 flex items-center gap-2 group transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-white/40"
               style={{
-                background: '#e05252',
-                color: '#fff',
+                background: 'linear-gradient(135deg, #fedad3 0%, #fef1ed 100%)',
+                color: '#1a2734',
                 padding: '14px 28px',
                 borderRadius: '100px',
                 textDecoration: 'none',
@@ -93,7 +93,7 @@ export default function App() {
                 letterSpacing: '0.02em',
               }}
             >
-              Need help? Submit a report <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+              Need help? Submit a report <span className="group-hover:translate-x-1 transition-transform inline-block opacity-80">→</span>
             </a>
           </div>
         )}
