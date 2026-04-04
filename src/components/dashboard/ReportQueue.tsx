@@ -80,7 +80,7 @@ export default function ReportQueue({ cityId, active, assigned, resolved, newest
   }
 
   return (
-    <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', display: 'flex', flexDirection: 'column' }} dir={rtl ? 'rtl' : 'ltr'}>
+    <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }} dir={rtl ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div style={{ padding: '14px 16px 0 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -123,7 +123,7 @@ export default function ReportQueue({ cityId, active, assigned, resolved, newest
       </div>
 
       {/* Report list */}
-      <div style={{ flex: 1, overflowY: 'auto', maxHeight: 'calc(100vh - 280px)', padding: '8px 10px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 10px' }}>
         {/* Clusters (active tab only) */}
         {tab === 'active' && [...clusters.entries()]
           .filter(([, v]) => v.length >= 3)

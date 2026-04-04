@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import type { Lang } from '../../types'
-import { getCityById, CITIES } from '../../data/cities'
+import { getCityById } from '../../data/cities'
 import {
   getReports,
-  getByStatus,
   subscribe,
   startSimulation,
   stopSimulation,
@@ -200,7 +199,7 @@ export default function Dashboard({ cityId, onBack, lang, onLangChange }: Dashbo
           gridTemplateColumns: fieldMode ? '1fr' : '28% 1fr 28%',
           gap: 12,
           padding: '12px',
-          alignItems: 'start',
+          alignItems: 'stretch',
         }}>
           {/* Left */}
           <ReportQueue

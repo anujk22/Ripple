@@ -94,7 +94,7 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
   ]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }} dir={rtl ? 'rtl' : 'ltr'}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, height: '100%' }} dir={rtl ? 'rtl' : 'ltr'}>
 
       {/* Card 1 — Readiness Ring */}
       <div className="glass-card" style={{ borderRadius: 20, padding: 18 }}>
@@ -168,7 +168,7 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
       </div>
 
       {/* Card 3 — Incident Briefing */}
-      <div className="glass-card" style={{ borderRadius: 20, padding: 18 }}>
+      <div className="glass-card" style={{ borderRadius: 20, padding: 18, flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#1a2734', textTransform: 'uppercase' }}>
             {t('dash.briefing')}

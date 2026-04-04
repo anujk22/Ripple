@@ -185,7 +185,7 @@ export default function LiveMap({ city, reports, newestId, t }: Props) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}>
       {/* Layer toggles */}
       <div className="glass-card" style={{ borderRadius: 14, padding: '8px 14px', display: 'flex', gap: 12, flexWrap: 'nowrap', overflowX: 'auto', alignItems: 'center' }}>
         {(Object.keys(layers) as (keyof LayerToggles)[]).map((key) => (
@@ -202,7 +202,7 @@ export default function LiveMap({ city, reports, newestId, t }: Props) {
       </div>
 
       {/* Map */}
-      <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', height: 'calc(100vh - 280px)', minHeight: 400, padding: 0 }}>
+      <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', flex: 1, minHeight: 400, padding: 0 }}>
         <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
       </div>
 
