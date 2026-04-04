@@ -122,21 +122,26 @@ export function computeReadiness(cityId: string): number {
   const city = CITIES.find((c) => c.id === cityId)
   if (!city) return 0
   const r = city.resources
-  const emergencies = getByStatus(cityId, 'active').filter(
-    (rep) => rep.urgency === 'emergency',
-  ).length
+  const activeReports = getByStatus(cityId, 'active')
+
+  let penalty = 0
+  for (const rep of activeReports) {
+    if (rep.urgency === 'emergency') penalty += 6
+    else if (rep.urgency === 'today') penalty += 2
+    else penalty += 0.5 // minor penalty for safe/general reports
+  }
 
   const hospitalScore = (r.hospitalsOperating / Math.max(r.hospitalsTotal, 1)) * 100
   const corridorScore = (r.corridorsPassable / Math.max(r.corridorsTotal, 1)) * 100
   const supplyScore = Math.min(r.supplyDays / 14, 1) * 100
-  const emergPenalty = Math.min(emergencies * 8, 40)
+  const combinedPenalty = Math.min(penalty, 40) // cap maximum drag at 40 points
 
   return Math.max(
     0,
     Math.min(
       100,
       Math.round(
-        0.35 * hospitalScore + 0.35 * corridorScore + 0.30 * supplyScore - emergPenalty,
+        0.35 * hospitalScore + 0.35 * corridorScore + 0.30 * supplyScore - combinedPenalty,
       ),
     ),
   )

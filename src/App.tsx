@@ -63,9 +63,19 @@ export default function App() {
           {/* Resident form link */}
           <a
             href="#report"
-            className="mt-4 text-[13px] text-[#36454F]/70 hover:text-[#36454F] transition-colors underline underline-offset-2"
+            className="mt-6 flex items-center gap-2 group transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            style={{
+              background: '#e05252',
+              color: '#fff',
+              padding: '14px 28px',
+              borderRadius: '100px',
+              textDecoration: 'none',
+              fontWeight: 700,
+              fontSize: '15px',
+              letterSpacing: '0.02em',
+            }}
           >
-            Need help? Submit a report →
+            Need help? Submit a report <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
           </a>
         </div>
       </>

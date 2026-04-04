@@ -42,19 +42,32 @@ const FALLBACK_FACILITIES: Record<string, FacilityPin[]> = {
   cairo:     [{ id: 'f5', name: 'Cairo University Hospital', type: 'hospital', lat: 30.0271, lng: 31.2109 }],
 }
 
+const facilityCache = new Map<string, FacilityPin[]>()
+
 async function fetchFacilities(city: CityConfig): Promise<FacilityPin[]> {
+  if (facilityCache.has(city.id)) return facilityCache.get(city.id)!
+
   const { lat, lng } = city
   const query = `[out:json][timeout:10];(node["amenity"="hospital"](around:20000,${lat},${lng});node["amenity"="clinic"](around:12000,${lat},${lng});node["amenity"="school"](around:10000,${lat},${lng});node["amenity"="place_of_worship"]["religion"="muslim"](around:8000,${lat},${lng}););out body;`
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), 10000)
+  
   try {
     const res = await fetch(
       `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
       { signal: controller.signal },
     )
     clearTimeout(timer)
-    const data = await res.json()
-    return (data.elements as any[])
+
+    const text = await res.text()
+    let data;
+    try {
+      data = JSON.parse(text)
+    } catch {
+      throw new Error("Overpass returned XML/HTML (Rate limited or 504 Gateway Timeout)")
+    }
+
+    const pins = (data.elements as any[])
       .filter((el: any) => el.lat && el.lon)
       .slice(0, 60)
       .map((el: any) => ({
@@ -64,10 +77,17 @@ async function fetchFacilities(city: CityConfig): Promise<FacilityPin[]> {
         lat: el.lat,
         lng: el.lon,
       }))
+    
+    facilityCache.set(city.id, pins)
+    return pins
   } catch (e) {
     clearTimeout(timer)
     console.log(`[${new Date().toISOString()}] Overpass API unavailable:`, (e as Error).message)
-    return FALLBACK_FACILITIES[city.id] || []
+    const fallbacks = FALLBACK_FACILITIES[city.id] || []
+    
+    // Cache the fallbacks too so we don't re-spam Overpass on subsequent tab clicks
+    facilityCache.set(city.id, fallbacks)
+    return fallbacks
   }
 }
 

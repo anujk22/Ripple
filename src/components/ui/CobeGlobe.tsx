@@ -292,49 +292,7 @@ export default function CobeGlobe({
         )
       })}
 
-      {/* City selector below globe */}
-      <div style={{
-        position: 'absolute',
-        bottom: -52,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        display: 'flex',
-        gap: 6,
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-      }}>
-        {CITIES.map((city) => {
-          const status = cityStatuses[city.id]
-          const alertLevel = status?.alertLevel || 'stable'
-          return (
-            <button
-              key={city.id}
-              onClick={() => onRegionClickRef.current?.(city.id)}
-              style={{
-                fontSize: 11,
-                fontWeight: 600,
-                padding: '4px 12px',
-                borderRadius: 20,
-                background: 'rgba(255,255,255,0.55)',
-                backdropFilter: 'blur(8px)',
-                border: `1px solid ${ALERT_COLORS[alertLevel]}40`,
-                color: '#1a2734',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
-            >
-              <span style={{
-                width: 6, height: 6, borderRadius: '50%',
-                background: ALERT_COLORS[alertLevel],
-                display: 'inline-block',
-              }} />
-              {city.name}
-            </button>
-          )
-        })}
-      </div>
+
 
       <style>{`
         @keyframes cobePulse {
