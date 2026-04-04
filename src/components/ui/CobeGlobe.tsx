@@ -2,63 +2,61 @@
 
 import { useEffect, useRef, useCallback, useState } from "react"
 import createGlobe from "cobe"
-import scenarios from "../../data/scenarios"
+import { CITIES } from "../../data/cities"
+import type { CityStatus } from "../../types"
 
 interface CobeGlobeProps {
   className?: string
   speed?: number
-  onRegionClick?: (scenarioId: string) => void
+  onRegionClick?: (cityId: string) => void
+  cityStatuses?: Record<string, CityStatus>
 }
 
-const MARKERS = scenarios.map((s) => ({
-  id: s.id,
-  name: s.region,
-  lat: s.coordinates[1],
-  lng: s.coordinates[0],
+const MARKERS = CITIES.map((c) => ({
+  id: c.id,
+  name: c.name,
+  lat: c.lat,
+  lng: c.lng,
 }))
 
 interface DotPos {
   id: string
   name: string
-  x: number  // 0..1 fraction of canvas width
-  y: number  // 0..1 fraction of canvas height
+  x: number
+  y: number
   visible: boolean
 }
 
-// Matches cobe's exact internal U() function:
-// var{sin:le,cos:_e}=Math; U([lat,lng]) => [-cos(lat)*cos(lngA), sin(lat), cos(lat)*sin(lngA)]
-// where lngA = lng*PI/180 - PI
-// Expanding: cos(lngA)=cos(lng-π)=-cos(lng), sin(lngA)=sin(lng-π)=-sin(lng)
-// → x = cos(lat)*cos(lng),  y = sin(lat),  z = -cos(lat)*sin(lng)
 function cobeVec(lat: number, lng: number): [number, number, number] {
   const latR = lat * Math.PI / 180
   const lngR = lng * Math.PI / 180
   const cosLat = Math.cos(latR)
-  return [
-    cosLat * Math.cos(lngR),   // x
-    Math.sin(latR),             // y
-    -cosLat * Math.sin(lngR),  // z — NEGATED vs standard spherical coords
-  ]
+  return [cosLat * Math.cos(lngR), Math.sin(latR), -cosLat * Math.sin(lngR)]
 }
 
-// Matches cobe's O(t) function exactly (B=1, T=[0,0] defaults)
-// f=phi, l=theta, a=cos(phi), i=sin(phi), r=cos(theta), o=sin(theta)
-function cobeProject(t: [number, number, number], phi: number, theta: number): { x: number; y: number; visible: boolean } {
-  const a = Math.cos(phi)
-  const i = Math.sin(phi)
-  const r = Math.cos(theta)
-  const o = Math.sin(theta)
-  const c = (a * t[0] + i * t[2]) * 0.8        // scale by cobe's ee=0.8 globe fill ratio
+function cobeProject(t: [number, number, number], phi: number, theta: number) {
+  const a = Math.cos(phi), i = Math.sin(phi), r = Math.cos(theta), o = Math.sin(theta)
+  const c = (a * t[0] + i * t[2]) * 0.8
   const s = (i * o * t[0] + r * t[1] - a * o * t[2]) * 0.8
   const vis = -i * r * t[0] + o * t[1] + a * r * t[2]
-  return {
-    x: (c + 1) / 2,
-    y: (-s + 1) / 2,
-    visible: vis >= 0,  // only show on front face — no edge-bleed
-  }
+  return { x: (c + 1) / 2, y: (-s + 1) / 2, visible: vis >= 0 }
 }
 
-export default function CobeGlobe({ className = "", speed = 0.001, onRegionClick }: CobeGlobeProps) {
+const ALERT_COLORS: Record<string, string> = {
+  critical: '#e05252',
+  warning:  '#e6a817',
+  stable:   '#3d8b85',
+}
+
+const ALERT_DOTS: Record<string, string> = {
+  critical: '🔴',
+  warning:  '🟠',
+  stable:   '🟢',
+}
+
+export default function CobeGlobe({
+  className = "", speed = 0.001, onRegionClick, cityStatuses = {},
+}: CobeGlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const pointerInteracting = useRef<{ x: number; y: number } | null>(null)
@@ -116,8 +114,7 @@ export default function CobeGlobe({ className = "", speed = 0.001, onRegionClick
 
     function init() {
       const width = canvas!.offsetWidth
-      if (width === 0) return
-      if (globe) return
+      if (width === 0 || globe) return
 
       globe = createGlobe(canvas!, {
         devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
@@ -135,22 +132,15 @@ export default function CobeGlobe({ className = "", speed = 0.001, onRegionClick
 
       function animate() {
         if (!isPausedRef.current) phi += speed
-        const curPhi = phi + phiOffsetRef.current + dragOffset.current.phi
+        const curPhi   = phi + phiOffsetRef.current + dragOffset.current.phi
         const curTheta = 0.2 + thetaOffsetRef.current + dragOffset.current.theta
-
         globe!.update({ phi: curPhi, theta: curTheta })
 
-        // Update dot positions every 2 frames
         if (frame++ % 2 === 0) {
           setDots(MARKERS.map((m) => {
-            const vec = cobeVec(m.lat, m.lng)
+            const vec  = cobeVec(m.lat, m.lng)
             const proj = cobeProject(vec, curPhi, curTheta)
-            return {
-              id: m.id, name: m.name,
-              x: proj.x,   // fraction 0..1
-              y: proj.y,
-              visible: proj.visible,
-            }
+            return { id: m.id, name: m.name, x: proj.x, y: proj.y, visible: proj.visible }
           }))
         }
 
@@ -185,78 +175,179 @@ export default function CobeGlobe({ className = "", speed = 0.001, onRegionClick
         }}
       />
 
-      {/* Dots positioned as percentage of the container (matching cobe's 0..1 output) */}
-      {dots.map((dot) => (
-        <button
-          key={dot.id}
-          onClick={() => onRegionClickRef.current?.(dot.id)}
-          onMouseEnter={() => setHoveredId(dot.id)}
-          onMouseLeave={() => setHoveredId(null)}
-          style={{
-            position: "absolute",
-            left: `${dot.x * 100}%`,
-            top: `${dot.y * 100}%`,
-            transform: "translate(-50%, -50%)",
-            opacity: dot.visible ? 1 : 0,
-            pointerEvents: dot.visible ? "auto" : "none",
-            transition: "opacity 0.2s",
-            background: "none",
-            border: "none",
-            padding: 4,  // extra hit area
-            cursor: "pointer",
-          }}
-        >
-          {/* Pulsing ring on hover */}
-          {hoveredId === dot.id && (
-            <span style={{
+      {dots.map((dot) => {
+        const status = cityStatuses[dot.id]
+        const alertLevel = status?.alertLevel || 'stable'
+        const pinColor = ALERT_COLORS[alertLevel]
+        const isHovered = hoveredId === dot.id
+
+        return (
+          <button
+            key={dot.id}
+            onClick={() => onRegionClickRef.current?.(dot.id)}
+            onMouseEnter={() => setHoveredId(dot.id)}
+            onMouseLeave={() => setHoveredId(null)}
+            style={{
               position: "absolute",
-              inset: -4,
+              left: `${dot.x * 100}%`,
+              top:  `${dot.y * 100}%`,
+              transform: "translate(-50%, -50%)",
+              opacity: dot.visible ? 1 : 0,
+              pointerEvents: dot.visible ? "auto" : "none",
+              transition: "opacity 0.2s",
+              background: "none", border: "none", padding: 6, cursor: "pointer",
+            }}
+          >
+            {/* Pulse ring on hover */}
+            {isHovered && (
+              <span style={{
+                position: "absolute", inset: -6, borderRadius: "50%",
+                background: `${pinColor}25`,
+                animation: "cobePulse 1.5s ease-out infinite",
+                pointerEvents: "none",
+              }} />
+            )}
+            {/* Critical alert ring */}
+            {alertLevel === 'critical' && (
+              <span style={{
+                position: "absolute", inset: -4, borderRadius: "50%",
+                border: `1.5px solid ${pinColor}`,
+                animation: "criticalRing 2s ease-out infinite",
+                pointerEvents: "none",
+              }} />
+            )}
+            {/* Pin dot */}
+            <span style={{
+              display: "block",
+              width: isHovered ? 14 : 11,
+              height: isHovered ? 14 : 11,
               borderRadius: "50%",
-              background: "rgba(26,26,46,0.2)",
-              animation: "cobePulse 1.5s ease-out infinite",
-              pointerEvents: "none",
+              background: pinColor,
+              border: "2.5px solid rgba(255,255,255,0.9)",
+              boxShadow: `0 1px 6px rgba(0,0,0,0.25), 0 0 0 2px ${pinColor}30`,
+              transition: "width 0.15s, height 0.15s, background 0.3s",
             }} />
-          )}
-          {/* The dot */}
-          <span style={{
-            display: "block",
-            width: hoveredId === dot.id ? 13 : 10,
-            height: hoveredId === dot.id ? 13 : 10,
-            borderRadius: "50%",
-            background: "#1a1a2e",
-            border: "2.5px solid rgba(255,255,255,0.85)",
-            boxShadow: "0 1px 6px rgba(0,0,0,0.25)",
-            transition: "width 0.15s, height 0.15s",
-          }} />
-          {/* Tooltip on hover */}
-          {hoveredId === dot.id && (
-            <span style={{
-              position: "absolute",
-              bottom: "calc(100% + 8px)",
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "#1a1a2e",
-              color: "#fff",
-              fontSize: "0.6rem",
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              padding: "0.3rem 0.7rem",
-              borderRadius: 5,
-              whiteSpace: "nowrap",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-              pointerEvents: "none",
-            }}>
-              {dot.name}
-            </span>
-          )}
-        </button>
-      ))}
+
+            {/* Status badge tooltip */}
+            {isHovered && status && (
+              <div style={{
+                position: "absolute",
+                bottom: "calc(100% + 10px)",
+                left: "50%",
+                transform: "translateX(-50%)",
+                background: "rgba(26,39,52,0.95)",
+                backdropFilter: "blur(8px)",
+                color: "#fff",
+                fontSize: "11px",
+                fontWeight: 600,
+                padding: "7px 12px",
+                borderRadius: 10,
+                whiteSpace: "nowrap",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                pointerEvents: "none",
+                animation: "tooltipFade 0.15s ease-out",
+              }}>
+                <div style={{ marginBottom: 3, display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <span>{ALERT_DOTS[alertLevel]}</span>
+                  <span style={{ fontWeight: 700 }}>{dot.name}</span>
+                </div>
+                {status.active > 0 ? (
+                  <div style={{ color: '#94a3b8', fontSize: 10 }}>
+                    {status.active} active
+                    {status.critical > 0 && (
+                      <span style={{ color: '#e05252', fontWeight: 700 }}> · {status.critical} critical</span>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ color: '#3d8b85', fontSize: 10 }}>All clear</div>
+                )}
+                <div style={{ color: '#475569', fontSize: 10, marginTop: 2 }}>Click to open dashboard</div>
+              </div>
+            )}
+
+            {/* Fallback: name only when no status */}
+            {isHovered && !status && (
+              <div style={{
+                position: "absolute",
+                bottom: "calc(100% + 10px)",
+                left: "50%",
+                transform: "translateX(-50%)",
+                background: "#1a1a2e",
+                color: "#fff",
+                fontSize: "0.6rem",
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                padding: "0.3rem 0.7rem",
+                borderRadius: 5,
+                whiteSpace: "nowrap",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                pointerEvents: "none",
+              }}>
+                {dot.name}
+              </div>
+            )}
+          </button>
+        )
+      })}
+
+      {/* City selector below globe */}
+      <div style={{
+        position: 'absolute',
+        bottom: -52,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: 6,
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+      }}>
+        {CITIES.map((city) => {
+          const status = cityStatuses[city.id]
+          const alertLevel = status?.alertLevel || 'stable'
+          return (
+            <button
+              key={city.id}
+              onClick={() => onRegionClickRef.current?.(city.id)}
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                padding: '4px 12px',
+                borderRadius: 20,
+                background: 'rgba(255,255,255,0.55)',
+                backdropFilter: 'blur(8px)',
+                border: `1px solid ${ALERT_COLORS[alertLevel]}40`,
+                color: '#1a2734',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              <span style={{
+                width: 6, height: 6, borderRadius: '50%',
+                background: ALERT_COLORS[alertLevel],
+                display: 'inline-block',
+              }} />
+              {city.name}
+            </button>
+          )
+        })}
+      </div>
 
       <style>{`
         @keyframes cobePulse {
-          0% { transform: scale(1); opacity: 0.6; }
+          0%   { transform: scale(1); opacity: 0.6; }
           100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes criticalRing {
+          0%   { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(2.8); opacity: 0; }
+        }
+        @keyframes tooltipFade {
+          from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
       `}</style>
     </div>

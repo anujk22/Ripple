@@ -84,3 +84,42 @@ input[type="range"]::-moz-range-thumb {
   cursor: grab;
   border: none;
 }
+
+/* ── Glass card utility ────────────────────────────────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+}
+
+/* ── Leaflet overrides for glass aesthetic ─────────────────────────────────── */
+.leaflet-container {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+}
+.leaflet-popup-tip-container { display: none; }
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1) !important;
+}
+.leaflet-control-zoom a {
+  background: rgba(255,255,255,0.9) !important;
+  backdrop-filter: blur(8px);
+  color: #1a2734 !important;
+}
+
+/* ── Dark scrollbar for report form ───────────────────────────────────────── */
+.ripple-report-form ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+}
+
+/* ── Dashboard slim scrollbar ─────────────────────────────────────────────── */
+.ripple-dashboard ::-webkit-scrollbar { width: 4px; }
+.ripple-dashboard ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 100px; }
+
