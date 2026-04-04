@@ -1,14 +1,18 @@
-// Master list of all interventions used across scenarios.
-// Each scenario references a subset by id.
+export interface InterventionDef {
+  id: string;
+  label: string;
+  icon: string;
+  description: string;
+  overlayEmoji: string;
+}
 
-const interventions = {
+const interventions: Record<string, InterventionDef> = {
   'plant-trees-main': {
     id: 'plant-trees-main',
     label: 'Plant Street Trees',
     icon: '🌳',
     description: 'Add shade trees along the main road to cool surfaces and filter air.',
     overlayEmoji: '🌲',
-    overlayColor: '#2d6a4f',
   },
   'pedestrianize-market': {
     id: 'pedestrianize-market',
@@ -16,7 +20,6 @@ const interventions = {
     icon: '🚶',
     description: 'Close Market Road to vehicles, creating a walkable corridor.',
     overlayEmoji: '🚶',
-    overlayColor: '#e8d44d',
   },
   'add-clinic': {
     id: 'add-clinic',
@@ -24,7 +27,6 @@ const interventions = {
     icon: '🏥',
     description: 'Build a small clinic so residents can access healthcare on foot.',
     overlayEmoji: '🏥',
-    overlayColor: '#e74c3c',
   },
   'green-roofs': {
     id: 'green-roofs',
@@ -32,15 +34,13 @@ const interventions = {
     icon: '🌿',
     description: 'Add living rooftops to commercial buildings to absorb heat and rainwater.',
     overlayEmoji: '🌿',
-    overlayColor: '#27ae60',
   },
   'elevate-roads': {
     id: 'elevate-roads',
     label: 'Elevate Evacuation Roads',
-    icon: '🛤️',
+    icon: '⬆️',
     description: 'Raise key roads above flood level to keep evacuation routes passable.',
     overlayEmoji: '⬆️',
-    overlayColor: '#3498db',
   },
   'plant-mangroves': {
     id: 'plant-mangroves',
@@ -48,7 +48,6 @@ const interventions = {
     icon: '🌴',
     description: 'Restore mangrove buffers along the waterfront to absorb storm surges.',
     overlayEmoji: '🌴',
-    overlayColor: '#1abc9c',
   },
   'emergency-shelters': {
     id: 'emergency-shelters',
@@ -56,7 +55,6 @@ const interventions = {
     icon: '🏛️',
     description: 'Convert a building into a fortified shelter with emergency supplies.',
     overlayEmoji: '🏛️',
-    overlayColor: '#9b59b6',
   },
   'bike-lanes': {
     id: 'bike-lanes',
@@ -64,7 +62,6 @@ const interventions = {
     icon: '🚲',
     description: 'Stripe protected bike lanes on the main road to reduce car trips.',
     overlayEmoji: '🚲',
-    overlayColor: '#e67e22',
   },
   'mixed-use-conversion': {
     id: 'mixed-use-conversion',
@@ -72,7 +69,6 @@ const interventions = {
     icon: '🏗️',
     description: 'Redevelop empty lots as mixed-use (shops + housing) to reduce driving.',
     overlayEmoji: '🏗️',
-    overlayColor: '#f39c12',
   },
 };
 
