@@ -80,7 +80,7 @@ export default function ReportQueue({ cityId, active, assigned, resolved, newest
   }
 
   return (
-    <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }} dir={rtl ? 'rtl' : 'ltr'}>
+    <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }} dir={rtl ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div style={{ padding: '14px 16px 0 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>

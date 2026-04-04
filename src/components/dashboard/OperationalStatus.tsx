@@ -94,7 +94,7 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
   ]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, height: '100%' }} dir={rtl ? 'rtl' : 'ltr'}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, height: '100%', minHeight: 0 }} dir={rtl ? 'rtl' : 'ltr'}>
 
       {/* Card 1 — Readiness Ring */}
       <div className="glass-card" style={{ borderRadius: 20, padding: 18 }}>

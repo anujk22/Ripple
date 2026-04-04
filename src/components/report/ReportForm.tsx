@@ -202,17 +202,22 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           borderBottom: '1px solid rgba(0,0,0,0.06)',
         }}>
-          <div style={{ display: 'flex', gap: 4 }}>
-            {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
-              <button key={l} onClick={() => onLangChange(l)} style={{
-                fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 14, cursor: 'pointer',
-                background: lang === l ? '#3d8b85' : 'rgba(255,255,255,0.5)',
-                border: lang === l ? '1px solid #3d8b85' : '1px solid rgba(0,0,0,0.1)',
-                color: lang === l ? '#fff' : '#4b5563',
-              }}>
-                {LANG_LABELS[l]}
-              </button>
-            ))}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              {t('form.languages')}
+            </span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
+                <button key={l} onClick={() => onLangChange(l)} style={{
+                  fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 14, cursor: 'pointer',
+                  background: lang === l ? '#3d8b85' : 'rgba(255,255,255,0.5)',
+                  border: lang === l ? '1px solid #3d8b85' : '1px solid rgba(0,0,0,0.1)',
+                  color: lang === l ? '#fff' : '#4b5563',
+                }}>
+                  {LANG_LABELS[l]}
+                </button>
+              ))}
+            </div>
           </div>
           <div style={{ display: 'flex', gap: 5 }}>
             {[1, 2, 3, 4, 5].map((s) => (
@@ -417,7 +422,7 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
             )}
           </div>
 
-          <p style={{ fontSize: 11, color: '#9ca3af', textAlign: 'center', marginTop: 16, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 12, color: '#4b5563', fontWeight: 500, textAlign: 'center', marginTop: 16, lineHeight: 1.5 }}>
             {t('form.privacy')}
           </p>
         </div>

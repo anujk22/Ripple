@@ -114,7 +114,7 @@ export default function LiveMap({ city, reports, newestId, t }: Props) {
 
   const [facilities, setFacilities]   = useState<FacilityPin[]>([])
   const [layers, setLayers]           = useState<LayerToggles>({
-    reports: true, hospitals: true, shelters: true, mosques: true, coverage: false,
+    reports: true, hospitals: true, shelters: true, mosques: true, coverage: true,
   })
 
   // Init map once per city
@@ -185,24 +185,35 @@ export default function LiveMap({ city, reports, newestId, t }: Props) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%', minWidth: 0 }}>
       {/* Layer toggles */}
-      <div className="glass-card" style={{ borderRadius: 14, padding: '8px 14px', display: 'flex', gap: 12, flexWrap: 'nowrap', overflowX: 'auto', alignItems: 'center' }}>
+      <div className="glass-card" style={{ borderRadius: 14, padding: '8px 10px', display: 'flex', gap: 6, flexWrap: 'wrap', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
         {(Object.keys(layers) as (keyof LayerToggles)[]).map((key) => (
-          <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer', fontSize: 12, color: '#1a2734', fontWeight: 500, whiteSpace: 'nowrap' }}>
+          <label key={key} style={{ 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', 
+            flex: 1, minWidth: 'min-content',
+            fontSize: 10, fontWeight: 600, whiteSpace: 'nowrap',
+            padding: '5px 8px', borderRadius: 20,
+            background: layers[key] ? '#3d8b85' : 'rgba(255,255,255,0.5)',
+            border: layers[key] ? '1px solid #3d8b85' : '1px solid rgba(0,0,0,0.1)',
+            color: layers[key] ? '#fff' : '#4b5563',
+            transition: 'all 0.2s',
+            boxShadow: layers[key] ? '0 2px 4px rgba(61,139,133,0.2)' : 'none'
+          }}>
             <input
               type="checkbox"
               checked={layers[key]}
               onChange={() => toggleLayer(key)}
-              style={{ accentColor: '#3d8b85', width: 14, height: 14 }}
+              style={{ display: 'none' }}
             />
+            <span style={{ fontSize: 9, fontWeight: 'bold', width: 8, display: 'inline-block', textAlign: 'center', opacity: layers[key] ? 1 : 0, transition: 'opacity 0.2s' }}>✓</span>
             {t(`map.${key}`)}
           </label>
         ))}
       </div>
 
       {/* Map */}
-      <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', flex: 1, minHeight: 400, padding: 0 }}>
+      <div className="glass-card" style={{ borderRadius: 20, overflow: 'hidden', flex: 1, minHeight: 0, padding: 0 }}>
         <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
       </div>
 

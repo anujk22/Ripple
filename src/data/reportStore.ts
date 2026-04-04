@@ -123,25 +123,46 @@ export function computeReadiness(cityId: string): number {
   if (!city) return 0
   const r = city.resources
   const activeReports = getByStatus(cityId, 'active')
+  const assignedReports = getByStatus(cityId, 'assigned')
+  const resolvedReports = getByStatus(cityId, 'resolved')
 
   let penalty = 0
   for (const rep of activeReports) {
-    if (rep.urgency === 'emergency') penalty += 6
-    else if (rep.urgency === 'today') penalty += 2
-    else penalty += 0.5 // minor penalty for safe/general reports
+    if (rep.urgency === 'emergency') penalty += 8
+    else if (rep.urgency === 'today') penalty += 4
+    else penalty += 1 // minor penalty for safe/general reports
   }
 
-  const hospitalScore = (r.hospitalsOperating / Math.max(r.hospitalsTotal, 1)) * 100
-  const corridorScore = (r.corridorsPassable / Math.max(r.corridorsTotal, 1)) * 100
-  const supplyScore = Math.min(r.supplyDays / 14, 1) * 100
-  const combinedPenalty = Math.min(penalty, 40) // cap maximum drag at 40 points
+  let bonus = 0
+  for (const rep of assignedReports) {
+    if (rep.urgency === 'emergency') bonus += 5
+    else if (rep.urgency === 'today') bonus += 3
+    else bonus += 1
+  }
+  for (const rep of resolvedReports) {
+    if (rep.urgency === 'emergency') bonus += 15
+    else if (rep.urgency === 'today') bonus += 8
+    else bonus += 3
+  }
+
+  const baseScore = 20
+
+  const resourceFactor = 
+    (r.hospitalsOperating / Math.max(r.hospitalsTotal, 1)) * 0.4 +
+    (r.corridorsPassable / Math.max(r.corridorsTotal, 1)) * 0.4 +
+    (Math.min(r.supplyDays / 14, 1)) * 0.2;
+    
+  const resourceScore = resourceFactor * 30; // Max 30 points from resources
+
+  const combinedPenalty = Math.min(penalty, 40) // cap drag at 40
+  const combinedBonus = Math.min(bonus, 50)     // cap interaction bonus at 50
 
   return Math.max(
     0,
     Math.min(
       100,
       Math.round(
-        0.35 * hospitalScore + 0.35 * corridorScore + 0.30 * supplyScore - combinedPenalty,
+        baseScore + resourceScore - combinedPenalty + combinedBonus,
       ),
     ),
   )

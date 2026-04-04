@@ -72,10 +72,10 @@ export default function Dashboard({ cityId, onBack, lang, onLangChange }: Dashbo
     <div
       className="ripple-dashboard w-full"
       dir={rtl ? 'rtl' : 'ltr'}
-      style={{ minHeight: '100vh', position: 'relative', fontFamily: 'Inter, system-ui, sans-serif' }}
+      style={{ height: '100vh', overflow: 'hidden', position: 'relative', fontFamily: 'Inter, system-ui, sans-serif' }}
     >
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100vh' }}>
 
         {/* ── HEADER ────────────────────────────────────────────────── */}
         <header className="glass-card" style={{
@@ -87,6 +87,7 @@ export default function Dashboard({ cityId, onBack, lang, onLangChange }: Dashbo
           justifyContent: 'space-between',
           gap: 12,
           flexWrap: 'wrap',
+          flexShrink: 0,
         }}>
           {/* Left: back + city */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
@@ -187,6 +188,7 @@ export default function Dashboard({ cityId, onBack, lang, onLangChange }: Dashbo
             padding: '6px 16px',
             fontSize: 12,
             fontWeight: 500,
+            flexShrink: 0,
           }}>
             📋 Field Mode — optimized for low bandwidth · animations disabled
           </div>
@@ -195,11 +197,13 @@ export default function Dashboard({ cityId, onBack, lang, onLangChange }: Dashbo
         {/* ── BODY ──────────────────────────────────────────────────── */}
         <div style={{
           flex: 1,
+          minHeight: 0,
           display: 'grid',
-          gridTemplateColumns: fieldMode ? '1fr' : '28% 1fr 28%',
+          gridTemplateColumns: fieldMode ? 'minmax(0, 1fr)' : '28% minmax(0, 1fr) 28%',
           gap: 12,
           padding: '12px',
           alignItems: 'stretch',
+          maxWidth: '100%',
         }}>
           {/* Left */}
           <ReportQueue
