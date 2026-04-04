@@ -71,15 +71,10 @@ export default function Dashboard({ cityId, onBack, lang, onLangChange }: Dashbo
 
   return (
     <div
-      className="ripple-dashboard"
+      className="ripple-dashboard w-full"
       dir={rtl ? 'rtl' : 'ltr'}
       style={{ minHeight: '100vh', position: 'relative', fontFamily: 'Inter, system-ui, sans-serif' }}
     >
-      {/* Gradient background (bleed from landing) */}
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 0,
-        background: 'linear-gradient(135deg, #e8f0e4 0%, #f5f0eb 40%, #dff0ed 80%, #f0ebe8 100%)',
-      }} />
 
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 

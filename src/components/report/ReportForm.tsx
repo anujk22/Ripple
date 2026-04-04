@@ -60,7 +60,6 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
     if (!shareLocation) {
       navigator.geolocation?.getCurrentPosition(
         (pos) => {
-          // Round to 3dp for privacy
           setLocation({
             lat: Math.round(pos.coords.latitude * 1000) / 1000,
             lng: Math.round(pos.coords.longitude * 1000) / 1000,
@@ -128,15 +127,13 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
     true,
   ][step - 1]
 
-  // ── Success screen ────────────────────────────────────────────────────────
   if (submitted) {
     return (
       <div style={{
-        minHeight: '100vh', background: '#0d1b2a',
+        minHeight: '100vh', width: '100%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'Inter, system-ui, sans-serif', position: 'relative', overflow: 'hidden',
+        padding: 16,
       }} dir={rtl ? 'rtl' : 'ltr'}>
-        {/* Ripple rings */}
         {[0, 1, 2, 3].map((i) => (
           <div key={i} style={{
             position: 'absolute',
@@ -146,19 +143,19 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
             animation: `rippleSuccess 2.4s ${i * 0.5}s ease-out infinite`,
           }} />
         ))}
-
-        <div style={{
+        <div className="glass-card" style={{
           position: 'relative', zIndex: 1,
-          textAlign: 'center', padding: 32, maxWidth: 360,
+          textAlign: 'center', padding: '40px 32px', maxWidth: 380, width: '100%',
+          borderRadius: 24, boxShadow: '0 8px 32px rgba(61,139,133,0.15)',
         }}>
           <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
-          <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
+          <h2 style={{ color: '#1a2734', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>
             {t('success.title')}
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: 15, marginBottom: 6 }}>
+          <p style={{ color: '#4b5563', fontSize: 15, marginBottom: 6 }}>
             {t('success.ref')} <strong style={{ color: '#3d8b85' }}>{refId}</strong>
           </p>
-          <p style={{ color: '#94a3b8', fontSize: 15, marginBottom: 28 }}>
+          <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 28 }}>
             {t('success.help')}
           </p>
           <button
@@ -175,64 +172,52 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
             onClick={onBack}
             style={{
               display: 'block', width: '100%', padding: '14px 0', borderRadius: 14,
-              background: 'rgba(255,255,255,0.08)', color: '#94a3b8',
-              fontWeight: 600, fontSize: 14, border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer',
+              background: 'rgba(255,255,255,0.7)', color: '#4b5563',
+              fontWeight: 600, fontSize: 14, border: '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
             }}
           >
             {t('success.back')}
           </button>
         </div>
-
-        <style>{`
-          @keyframes rippleSuccess {
-            0%   { transform: scale(1);  opacity: 0.8; }
-            100% { transform: scale(12); opacity: 0; }
-          }
-        `}</style>
       </div>
     )
   }
 
-  // ── Form ──────────────────────────────────────────────────────────────────
   return (
     <div style={{
-      minHeight: '100vh', background: '#0d1b2a',
+      minHeight: '100vh', width: '100%',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: 'Inter, system-ui, sans-serif', padding: 16,
+      padding: 16,
     }} dir={rtl ? 'rtl' : 'ltr'}>
 
-      <div style={{
+      <div className="glass-card" style={{
         width: '100%', maxWidth: 480,
-        background: 'rgba(255,255,255,0.06)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.12)',
         borderRadius: 24, overflow: 'hidden',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
       }}>
-
         {/* Top bar */}
         <div style={{
           padding: '14px 20px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          borderBottom: '1px solid rgba(0,0,0,0.06)',
         }}>
           <div style={{ display: 'flex', gap: 4 }}>
             {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
               <button key={l} onClick={() => onLangChange(l)} style={{
-                fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 6, cursor: 'pointer',
-                background: lang === l ? '#3d8b85' : 'rgba(255,255,255,0.1)',
-                border: lang === l ? '1px solid #3d8b85' : '1px solid rgba(255,255,255,0.12)',
-                color: '#fff',
+                fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 14, cursor: 'pointer',
+                background: lang === l ? '#3d8b85' : 'rgba(255,255,255,0.5)',
+                border: lang === l ? '1px solid #3d8b85' : '1px solid rgba(0,0,0,0.1)',
+                color: lang === l ? '#fff' : '#4b5563',
               }}>
                 {LANG_LABELS[l]}
               </button>
             ))}
           </div>
-          {/* Step indicator */}
-          <div style={{ display: 'flex', gap: 4 }}>
+          <div style={{ display: 'flex', gap: 5 }}>
             {[1, 2, 3, 4, 5].map((s) => (
               <div key={s} style={{
                 width: 6, height: 6, borderRadius: '50%',
-                background: step === s ? '#3d8b85' : step > s ? 'rgba(61,139,133,0.4)' : 'rgba(255,255,255,0.2)',
+                background: step === s ? '#3d8b85' : step > s ? 'rgba(61,139,133,0.3)' : 'rgba(0,0,0,0.1)',
                 transition: 'background 0.2s',
               }} />
             ))}
@@ -240,24 +225,24 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
         </div>
 
         <div style={{ padding: '24px 24px 20px' }}>
-          {/* Step 1 — Need type */}
+          {/* Step 1 */}
           {step === 1 && (
             <>
-              <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 6 }}>{t('form.step1')}</h2>
-              <p style={{ color: '#94a3b8', fontSize: 13, marginBottom: 20 }}>Select all that apply</p>
+              <h2 style={{ color: '#1a2734', fontSize: 22, fontWeight: 800, marginBottom: 6 }}>{t('form.step1')}</h2>
+              <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 20 }}>Select all that apply</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {NEED_OPTIONS.map(({ type, emoji, key }) => {
                   const sel = needs.includes(type)
                   return (
                     <button key={type} onClick={() => toggleNeed(type)} style={{
-                      height: 80, borderRadius: 14, display: 'flex', flexDirection: 'column',
+                      height: 80, borderRadius: 16, display: 'flex', flexDirection: 'column',
                       alignItems: 'center', justifyContent: 'center', gap: 6,
-                      background: sel ? 'rgba(61,139,133,0.2)' : 'rgba(255,255,255,0.06)',
-                      border: sel ? '2px solid #3d8b85' : '2px solid rgba(255,255,255,0.1)',
+                      background: sel ? 'rgba(61,139,133,0.1)' : 'rgba(255,255,255,0.5)',
+                      border: sel ? '2px solid #3d8b85' : '1px solid rgba(0,0,0,0.06)',
                       cursor: 'pointer', transition: 'all 0.15s',
                     }}>
                       <span style={{ fontSize: 32 }}>{emoji}</span>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: sel ? '#3d8b85' : '#cbd5e1' }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: sel ? '#3d8b85' : '#4b5563' }}>
                         {t(key)}
                       </span>
                     </button>
@@ -267,19 +252,19 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
             </>
           )}
 
-          {/* Step 2 — Urgency */}
+          {/* Step 2 */}
           {step === 2 && (
             <>
-              <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 20 }}>{t('form.step2')}</h2>
+              <h2 style={{ color: '#1a2734', fontSize: 22, fontWeight: 800, marginBottom: 20 }}>{t('form.step2')}</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {URGENCY_OPTIONS.map(({ urgency: u, key, color, bg }) => {
                   const sel = urgency === u
                   return (
                     <button key={u} onClick={() => setUrgency(u)} style={{
-                      padding: '16px 20px', borderRadius: 14, textAlign: rtl ? 'right' : 'left',
-                      background: sel ? bg : 'rgba(255,255,255,0.06)',
-                      border: `2px solid ${sel ? color : 'rgba(255,255,255,0.1)'}`,
-                      color: sel ? color : '#cbd5e1',
+                      padding: '16px 20px', borderRadius: 16, textAlign: rtl ? 'right' : 'left',
+                      background: sel ? bg : 'rgba(255,255,255,0.5)',
+                      border: sel ? `2px solid ${color}` : '1px solid rgba(0,0,0,0.06)',
+                      color: sel ? color : '#4b5563',
                       fontSize: 14, fontWeight: sel ? 700 : 500, cursor: 'pointer',
                       transition: 'all 0.15s',
                     }}>
@@ -291,33 +276,33 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
             </>
           )}
 
-          {/* Step 3 — People count */}
+          {/* Step 3 */}
           {step === 3 && (
             <>
-              <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 20 }}>{t('form.step3')}</h2>
+              <h2 style={{ color: '#1a2734', fontSize: 22, fontWeight: 800, marginBottom: 20 }}>{t('form.step3')}</h2>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, marginTop: 32 }}>
                 <button onClick={() => setPeople((v) => Math.max(1, v - 1))} style={{
                   width: 52, height: 52, borderRadius: '50%', fontSize: 24,
-                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                  color: '#fff', cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)',
+                  color: '#1a2734', cursor: 'pointer',
                 }}>−</button>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 52, fontWeight: 800, color: '#fff', lineHeight: 1 }}>{people}</div>
-                  <div style={{ fontSize: 14, color: '#94a3b8', marginTop: 4 }}>{t('form.people')}</div>
+                  <div style={{ fontSize: 52, fontWeight: 800, color: '#1a2734', lineHeight: 1 }}>{people}</div>
+                  <div style={{ fontSize: 14, color: '#6b7280', marginTop: 4 }}>{t('form.people')}</div>
                 </div>
                 <button onClick={() => setPeople((v) => Math.min(999, v + 1))} style={{
                   width: 52, height: 52, borderRadius: '50%', fontSize: 24,
-                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                  color: '#fff', cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)',
+                  color: '#1a2734', cursor: 'pointer',
                 }}>+</button>
               </div>
             </>
           )}
 
-          {/* Step 4 — Note */}
+          {/* Step 4 */}
           {step === 4 && (
             <>
-              <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 16 }}>{t('form.step4')}</h2>
+              <h2 style={{ color: '#1a2734', fontSize: 22, fontWeight: 800, marginBottom: 16 }}>{t('form.step4')}</h2>
               <textarea
                 ref={noteRef}
                 value={note}
@@ -325,59 +310,60 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
                 placeholder={t('form.note_placeholder')}
                 rows={4}
                 style={{
-                  width: '100%', borderRadius: 12, padding: '12px 14px',
-                  background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
-                  color: '#fff', fontSize: 14, resize: 'vertical', outline: 'none',
+                  width: '100%', borderRadius: 14, padding: '14px 16px',
+                  background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.1)',
+                  color: '#1a2734', fontSize: 14, resize: 'vertical', outline: 'none',
                   fontFamily: 'inherit', boxSizing: 'border-box', lineHeight: 1.5,
                 }}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
                 <button onClick={handleVoice} style={{
-                  fontSize: 12, padding: '6px 12px', borderRadius: 8, cursor: 'pointer',
-                  background: voiceActive ? '#e05252' : 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.15)', color: '#fff',
+                  fontSize: 12, padding: '8px 14px', borderRadius: 10, cursor: 'pointer', fontWeight: 600,
+                  background: voiceActive ? '#e05252' : 'rgba(255,255,255,0.7)',
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  color: voiceActive ? '#fff' : '#4b5563',
                   animation: voiceActive ? 'voicePulse 1s ease-in-out infinite' : undefined,
                 }}>
                   {t('form.voice')} {voiceActive ? '●' : ''}
                 </button>
-                <span style={{ fontSize: 11, color: '#64748b' }}>{note.length}/280</span>
+                <span style={{ fontSize: 11, color: '#9ca3af' }}>{note.length}/280</span>
               </div>
             </>
           )}
 
-          {/* Step 5 — Location */}
+          {/* Step 5 */}
           {step === 5 && (
             <>
-              <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 20 }}>{t('form.step5')}</h2>
+              <h2 style={{ color: '#1a2734', fontSize: 22, fontWeight: 800, marginBottom: 20 }}>{t('form.step5')}</h2>
 
               <label style={{
                 display: 'flex', alignItems: 'center', gap: 12,
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: 14, padding: '14px 16px', cursor: 'pointer', marginBottom: 14,
+                background: 'rgba(255,255,255,0.5)',
+                border: '1px solid rgba(0,0,0,0.06)',
+                borderRadius: 14, padding: '16px', cursor: 'pointer', marginBottom: 14,
               }}>
                 <input type="checkbox" checked={shareLocation} onChange={handleLocationToggle}
                   style={{ width: 18, height: 18, accentColor: '#3d8b85' }} />
-                <span style={{ color: '#cbd5e1', fontSize: 14, fontWeight: 500 }}>
+                <span style={{ color: '#1a2734', fontSize: 14, fontWeight: 600 }}>
                   {t('form.location_toggle')}
                 </span>
               </label>
 
               {location && (
-                <div style={{ fontSize: 12, color: '#3d8b85', marginBottom: 12, fontWeight: 500 }}>
+                <div style={{ fontSize: 12, color: '#3d8b85', marginBottom: 12, fontWeight: 600 }}>
                   📍 {location.lat}, {location.lng} (approximate)
                 </div>
               )}
 
               <div style={{ marginBottom: 12 }}>
-                <div style={{ color: '#94a3b8', fontSize: 12, marginBottom: 6 }}>{t('form.city_select')}</div>
+                <div style={{ color: '#6b7280', fontSize: 12, marginBottom: 6, fontWeight: 500 }}>{t('form.city_select')}</div>
                 <select
                   value={cityId}
                   onChange={(e) => setCityId(e.target.value)}
                   style={{
-                    width: '100%', padding: '10px 12px', borderRadius: 10,
-                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
-                    color: '#fff', fontSize: 14, outline: 'none',
+                    width: '100%', padding: '12px 14px', borderRadius: 12,
+                    background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.1)',
+                    color: '#1a2734', fontSize: 14, outline: 'none', fontWeight: 500,
                   }}
                 >
                   {CITIES.map((c) => <option key={c.id} value={c.id}>{c.fullName}</option>)}
@@ -387,13 +373,13 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
           )}
 
           {/* Nav buttons */}
-          <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 28 }}>
             {step > 1 && (
               <button onClick={() => setStep((s) => (s - 1) as Step)} style={{
-                flex: '0 0 auto', padding: '14px 18px', borderRadius: 14,
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: '#94a3b8', fontWeight: 600, fontSize: 14, cursor: 'pointer',
+                flex: '0 0 auto', padding: '14px 20px', borderRadius: 14,
+                background: 'rgba(255,255,255,0.5)',
+                border: '1px solid rgba(0,0,0,0.08)',
+                color: '#4b5563', fontWeight: 600, fontSize: 14, cursor: 'pointer',
               }}>
                 {t('form.back')}
               </button>
@@ -408,6 +394,7 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
                   color: '#fff', fontWeight: 700, fontSize: 15,
                   border: 'none', cursor: canProceed ? 'pointer' : 'not-allowed',
                   transition: 'background 0.2s',
+                  boxShadow: canProceed ? '0 4px 14px rgba(61,139,133,0.2)' : 'none',
                 }}
               >
                 {t('form.next')}
@@ -421,6 +408,7 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
                   background: submitting ? 'rgba(61,139,133,0.5)' : '#3d8b85',
                   color: '#fff', fontWeight: 700, fontSize: 15,
                   border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
+                  boxShadow: submitting ? 'none' : '0 4px 14px rgba(61,139,133,0.2)',
                 }}
               >
                 {submitting ? t('form.submitting') : t('form.submit')}
@@ -428,8 +416,7 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
             )}
           </div>
 
-          {/* Privacy notice */}
-          <p style={{ fontSize: 11, color: '#475569', textAlign: 'center', marginTop: 12, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 11, color: '#9ca3af', textAlign: 'center', marginTop: 16, lineHeight: 1.5 }}>
             {t('form.privacy')}
           </p>
         </div>
@@ -439,6 +426,10 @@ export default function ReportForm({ onBack, lang, onLangChange }: Props) {
         @keyframes voicePulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        @keyframes rippleSuccess {
+          0%   { transform: scale(1);  opacity: 0.8; }
+          100% { transform: scale(12); opacity: 0; }
         }
       `}</style>
     </div>

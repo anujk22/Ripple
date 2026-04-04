@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import CobeGlobe from './components/ui/CobeGlobe'
 import MeshGradientBg from './components/ui/MeshGradientBg'
 import Dashboard from './components/dashboard/Dashboard'
@@ -38,62 +38,66 @@ export default function App() {
     window.location.hash = hash
   }
 
-  // Globe view
-  if (route.view === 'globe') {
-    return (
-      <>
-        <MeshGradientBg />
-        <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6">
-          <div className="text-center mb-0 animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col items-center">
-            <img src="/1ripple.png" alt="1Ripple Logo" className="h-[4.5rem] md:h-[6rem] w-auto mb-2 object-contain" />
-            <p className="text-[#132A13] opacity-90 font-semibold tracking-tight text-lg md:text-2xl mt-4 w-full md:max-w-3xl mx-auto">
-              Every humanitarian decision creates ripples. See where yours land.
-            </p>
-            <p className="text-[#36454F] font-medium text-[15px] mt-3 w-full md:max-w-xl mx-auto leading-relaxed px-4">
-              Click a city to open its triage dashboard.
-            </p>
-          </div>
-          <div className="animate-in fade-in zoom-in-95 duration-1000 delay-300 w-full max-w-lg -mt-4">
-            <CobeGlobe
-              onRegionClick={(cityId) => navigateTo(`#dashboard-${cityId}`)}
-              cityStatuses={cityStatuses}
-              className="mx-auto"
-            />
-          </div>
-          {/* Resident form link */}
-          <a
-            href="#report"
-            className="mt-6 flex items-center gap-2 group transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-            style={{
-              background: '#e05252',
-              color: '#fff',
-              padding: '14px 28px',
-              borderRadius: '100px',
-              textDecoration: 'none',
-              fontWeight: 700,
-              fontSize: '15px',
-              letterSpacing: '0.02em',
-            }}
-          >
-            Need help? Submit a report <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-          </a>
-        </div>
-      </>
-    )
-  }
-
-  // Report form
-  if (route.view === 'report') {
-    return <ReportForm onBack={() => navigateTo('#')} lang={globalLang} onLangChange={setGlobalLang} />
-  }
-
-  // Dashboard
+  // The global layout shell
   return (
-    <Dashboard
-      cityId={route.cityId || 'gaza'}
-      onBack={() => navigateTo('#')}
-      lang={globalLang}
-      onLangChange={setGlobalLang}
-    />
+    <div className="min-h-screen bg-[#f0f4f1] text-[#1a2734] font-sans selection:bg-[#3d8b85]/20 overflow-x-hidden relative flex flex-col items-center justify-center w-full">
+      {/* Background Blobs */}
+      <div className="fixed inset-0 z-[0] pointer-events-none" style={{ overflow: 'hidden' }}>
+        <MeshGradientBg />
+        <div className="absolute top-0 left-1/4 w-[80vw] h-[80vh] bg-gradient-to-br from-[#e0f0e3] to-[#d4e4d8] rounded-full mix-blend-multiply filter blur-[120px] opacity-80 animate-blob" />
+        <div className="absolute top-1/4 right-1/4 w-[70vw] h-[70vh] bg-gradient-to-br from-[#f2e6d8] to-[#e6dac7] rounded-full mix-blend-multiply filter blur-[120px] opacity-70 animate-blob" style={{ animationDelay: '2s' }} />
+        <div className="absolute -bottom-1/4 left-1/3 w-[90vw] h-[90vh] bg-gradient-to-tr from-[#cfe2e5] to-[#c2d6d9] rounded-full mix-blend-multiply filter blur-[140px] opacity-80 animate-blob" style={{ animationDelay: '4s' }} />
+      </div>
+
+      <div className="relative z-[1] w-full min-h-screen">
+        {route.view === 'report' ? (
+          <ReportForm onBack={() => navigateTo('#')} lang={globalLang} onLangChange={setGlobalLang} />
+        ) : route.view === 'dashboard' && route.cityId ? (
+          <Dashboard
+            cityId={route.cityId}
+            onBack={() => navigateTo('#')}
+            lang={globalLang}
+            onLangChange={setGlobalLang}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-screen">
+            <div className="text-center z-10 flex flex-col items-center px-4 -mt-16">
+              <img src="/1ripple.png" alt="Ripple Logo" className="h-[4.5rem] md:h-[6rem] w-auto mb-3 object-contain" />
+              <p className="text-[15px] font-semibold text-[#1a2734] mb-1">
+                Every humanitarian decision creates ripples. See where yours land.
+              </p>
+              <p className="text-sm font-medium text-[#4b5563] mb-8 tracking-wide">
+                Click a city to open its triage dashboard.
+              </p>
+            </div>
+
+            <div className="animate-in fade-in zoom-in-95 duration-1000 delay-300 w-full max-w-lg -mt-4">
+              <CobeGlobe
+                onRegionClick={(cityId) => navigateTo(`#dashboard-${cityId}`)}
+                cityStatuses={cityStatuses}
+                className="mx-auto"
+              />
+            </div>
+            
+            <a
+              href="#report"
+              className="mt-6 flex items-center gap-2 group transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              style={{
+                background: '#e05252',
+                color: '#fff',
+                padding: '14px 28px',
+                borderRadius: '100px',
+                textDecoration: 'none',
+                fontWeight: 700,
+                fontSize: '15px',
+                letterSpacing: '0.02em',
+              }}
+            >
+              Need help? Submit a report <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
