@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef } from "react"
 import * as d3 from "d3"
 import scenarios from "../../data/scenarios"
 
@@ -11,7 +11,6 @@ interface GlobeProps {
   onRegionClick?: (scenarioId: string) => void
 }
 
-// Define clickable regions with their scenario IDs
 const REGIONS = scenarios.map((s) => ({
   id: s.id,
   label: s.region,
@@ -25,16 +24,12 @@ export default function Globe({
   onRegionClick,
 }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null)
+  const onRegionClickRef = useRef(onRegionClick)
 
-  const handleRegionClick = useCallback(
-    (id: string) => {
-      onRegionClick?.(id)
-    },
-    [onRegionClick]
-  )
+  // Keep the callback ref updated without re-running effect
+  useEffect(() => {
+    onRegionClickRef.current = onRegionClick
+  }, [onRegionClick])
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -62,6 +57,7 @@ export default function Globe({
 
     const path = d3.geoPath().projection(projection).context(context)
 
+    // --- Point-in-polygon for dot generation ---
     const pointInPolygon = (point: [number, number], polygon: number[][]): boolean => {
       const [x, y] = point
       let inside = false
@@ -115,7 +111,8 @@ export default function Globe({
     const allDots: DotData[] = []
     let landFeatures: any
 
-    // Pulse animation
+    // Track hovered region with a mutable ref (no state → no re-renders)
+    let hoveredRegionId: string | null = null
     let pulsePhase = 0
 
     const render = () => {
@@ -124,12 +121,12 @@ export default function Globe({
       const currentScale = projection.scale()
       const scaleFactor = currentScale / radius
 
-      // Globe background
+      // Globe sphere
       context.beginPath()
       context.arc(containerWidth / 2, containerHeight / 2, currentScale, 0, 2 * Math.PI)
       context.fillStyle = "#000000"
       context.fill()
-      context.strokeStyle = "rgba(255,255,255,0.15)"
+      context.strokeStyle = "rgba(255,255,255,0.12)"
       context.lineWidth = 1 * scaleFactor
       context.stroke()
 
@@ -138,29 +135,33 @@ export default function Globe({
         const graticule = d3.geoGraticule()
         context.beginPath()
         path(graticule())
-        context.strokeStyle = "rgba(255,255,255,0.08)"
+        context.strokeStyle = "rgba(255,255,255,0.06)"
         context.lineWidth = 0.5 * scaleFactor
         context.stroke()
 
         // Land outlines
         context.beginPath()
         landFeatures.features.forEach((feature: any) => { path(feature) })
-        context.strokeStyle = "rgba(255,255,255,0.25)"
+        context.strokeStyle = "rgba(255,255,255,0.2)"
         context.lineWidth = 0.8 * scaleFactor
         context.stroke()
 
-        // Dots
+        // Dots on land
         allDots.forEach((dot) => {
           const projected = projection([dot.lng, dot.lat])
-          if (projected && projected[0] >= 0 && projected[0] <= containerWidth && projected[1] >= 0 && projected[1] <= containerHeight) {
+          if (
+            projected &&
+            projected[0] >= 0 && projected[0] <= containerWidth &&
+            projected[1] >= 0 && projected[1] <= containerHeight
+          ) {
             context.beginPath()
             context.arc(projected[0], projected[1], 0.8 * scaleFactor, 0, 2 * Math.PI)
-            context.fillStyle = "rgba(255,255,255,0.25)"
+            context.fillStyle = "rgba(255,255,255,0.2)"
             context.fill()
           }
         })
 
-        // City markers
+        // City markers with pulse
         pulsePhase += 0.03
         REGIONS.forEach((region) => {
           const projected = projection(region.coordinates)
@@ -170,96 +171,103 @@ export default function Globe({
             region.coordinates,
             [-projection.rotate()[0], -projection.rotate()[1]]
           )
-          if (d > Math.PI / 2) return // behind globe
+          if (d > Math.PI / 2) return
 
           const pulse = Math.sin(pulsePhase) * 0.3 + 1
-          const isHovered = hoveredRegion === region.id
+          const isHovered = hoveredRegionId === region.id
 
           // Outer pulse ring
           context.beginPath()
-          context.arc(projected[0], projected[1], (isHovered ? 18 : 12) * pulse * scaleFactor, 0, 2 * Math.PI)
-          context.fillStyle = isHovered ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.05)"
+          context.arc(projected[0], projected[1], (isHovered ? 20 : 14) * pulse * scaleFactor, 0, 2 * Math.PI)
+          context.fillStyle = isHovered ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.06)"
           context.fill()
 
           // Inner dot
           context.beginPath()
-          context.arc(projected[0], projected[1], (isHovered ? 5 : 3.5) * scaleFactor, 0, 2 * Math.PI)
-          context.fillStyle = isHovered ? "#ffffff" : "rgba(255,255,255,0.85)"
+          context.arc(projected[0], projected[1], (isHovered ? 5.5 : 4) * scaleFactor, 0, 2 * Math.PI)
+          context.fillStyle = isHovered ? "#ffffff" : "rgba(255,255,255,0.9)"
           context.fill()
 
-          // Label
+          // Label on hover
           if (isHovered) {
-            context.font = `${11 * scaleFactor}px Inter, system-ui, sans-serif`
+            context.font = `600 ${12 * scaleFactor}px Inter, system-ui, sans-serif`
             context.fillStyle = "#ffffff"
             context.textAlign = "center"
-            context.fillText(region.label, projected[0], projected[1] - 14 * scaleFactor)
+            context.fillText(region.label, projected[0], projected[1] - 16 * scaleFactor)
+
+            // Sub-label
+            context.font = `400 ${9 * scaleFactor}px Inter, system-ui, sans-serif`
+            context.fillStyle = "rgba(255,255,255,0.6)"
+            context.fillText("Click to explore →", projected[0], projected[1] - 16 * scaleFactor + 13 * scaleFactor)
           }
         })
       }
     }
 
+    // Load world GeoJSON
     const loadWorldData = async () => {
       try {
-        setIsLoading(true)
         const response = await fetch(
           "https://raw.githubusercontent.com/martynafford/natural-earth-geojson/refs/heads/master/110m/physical/ne_110m_land.json"
         )
-        if (!response.ok) throw new Error("Failed to load land data")
+        if (!response.ok) throw new Error("Failed to load")
         landFeatures = await response.json()
         landFeatures.features.forEach((feature: any) => {
           const dots = generateDotsInPolygon(feature, 16)
           dots.forEach(([lng, lat]) => allDots.push({ lng, lat }))
         })
         render()
-        setIsLoading(false)
       } catch {
-        setError("Failed to load globe data. Check your internet connection.")
-        setIsLoading(false)
+        console.error("Failed to load globe data")
       }
     }
 
+    // Rotation state (all mutable, no React state)
     const rotation: [number, number] = [0, 0]
     let autoRotate = true
     const rotationSpeed = 0.3
 
-    const animate = () => {
+    const rotationTimer = d3.timer(() => {
       if (autoRotate) {
         rotation[0] += rotationSpeed
         projection.rotate(rotation)
       }
       render()
-    }
+    })
 
-    const rotationTimer = d3.timer(animate)
-
-    // Click detection for regions
+    // Find region within click radius
     const findRegionAtPixel = (x: number, y: number): string | null => {
       for (const region of REGIONS) {
         const projected = projection(region.coordinates)
         if (!projected) continue
+        // Check if region is on the visible side
+        const d = d3.geoDistance(
+          region.coordinates,
+          [-projection.rotate()[0], -projection.rotate()[1]]
+        )
+        if (d > Math.PI / 2) continue
         const dist = Math.sqrt((projected[0] - x) ** 2 + (projected[1] - y) ** 2)
-        if (dist < 20) return region.id
+        if (dist < 25) return region.id
       }
       return null
     }
 
-    let isDragging = false
+    // Click vs drag detection
     let dragStartX = 0
     let dragStartY = 0
 
     const handleMouseDown = (event: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect()
       dragStartX = event.clientX
       dragStartY = event.clientY
-      isDragging = false
       autoRotate = false
 
       const startRotation: [number, number] = [...rotation]
+      let didDrag = false
 
       const handleMouseMove = (moveEvent: MouseEvent) => {
         const dx = moveEvent.clientX - dragStartX
         const dy = moveEvent.clientY - dragStartY
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) isDragging = true
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) didDrag = true
 
         rotation[0] = startRotation[0] + dx * 0.5
         rotation[1] = startRotation[1] - dy * 0.5
@@ -271,14 +279,20 @@ export default function Globe({
         document.removeEventListener("mousemove", handleMouseMove)
         document.removeEventListener("mouseup", handleMouseUp)
 
-        if (!isDragging) {
+        if (!didDrag) {
+          // This was a click, not a drag
           const rect = canvas.getBoundingClientRect()
           const x = upEvent.clientX - rect.left
           const y = upEvent.clientY - rect.top
           const regionId = findRegionAtPixel(x, y)
-          if (regionId) handleRegionClick(regionId)
+          if (regionId) {
+            // Navigate!
+            onRegionClickRef.current?.(regionId)
+            return
+          }
         }
 
+        // Resume auto-rotation after a pause
         setTimeout(() => { autoRotate = true }, 2000)
       }
 
@@ -286,19 +300,20 @@ export default function Globe({
       document.addEventListener("mouseup", handleMouseUp)
     }
 
+    // Hover detection — updates mutable var, no React re-render
     const handleMouseMove = (event: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
       const x = event.clientX - rect.left
       const y = event.clientY - rect.top
       const regionId = findRegionAtPixel(x, y)
-      setHoveredRegion(regionId)
+      hoveredRegionId = regionId
       canvas.style.cursor = regionId ? "pointer" : "grab"
     }
 
     const handleWheel = (event: WheelEvent) => {
       event.preventDefault()
-      const scaleFactor = event.deltaY > 0 ? 0.95 : 1.05
-      const newScale = Math.max(radius * 0.5, Math.min(radius * 3, projection.scale() * scaleFactor))
+      const sf = event.deltaY > 0 ? 0.95 : 1.05
+      const newScale = Math.max(radius * 0.5, Math.min(radius * 3, projection.scale() * sf))
       projection.scale(newScale)
     }
 
@@ -314,26 +329,10 @@ export default function Globe({
       canvas.removeEventListener("mousemove", handleMouseMove)
       canvas.removeEventListener("wheel", handleWheel)
     }
-  }, [width, height, handleRegionClick, hoveredRegion])
-
-  if (error) {
-    return (
-      <div className={`flex items-center justify-center p-8 ${className}`}>
-        <div className="text-center">
-          <p className="text-red-400 font-medium mb-2">Error loading globe</p>
-          <p className="text-neutral-500 text-sm">{error}</p>
-        </div>
-      </div>
-    )
-  }
+  }, [width, height]) // No state in deps — everything is mutable inside
 
   return (
     <div className={`relative ${className}`}>
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div className="w-6 h-6 border-2 border-white/20 border-t-white/80 rounded-full animate-spin" />
-        </div>
-      )}
       <canvas
         ref={canvasRef}
         className="w-full h-auto"

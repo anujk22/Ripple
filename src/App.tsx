@@ -123,7 +123,7 @@ export default function App() {
     <div className={`min-h-screen transition-opacity duration-500 ${transitioning ? 'opacity-0' : 'opacity-100'}`}>
       {/* Top bar */}
       <div className="sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="w-full px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={handleBackToGlobe}
@@ -157,12 +157,12 @@ export default function App() {
       </div>
 
       {/* Scenario description */}
-      <div className="max-w-6xl mx-auto px-6 pt-5 pb-2">
+      <div className="w-full px-8 pt-5 pb-2">
         <p className="text-[12px] text-neutral-500 max-w-2xl">{scenario.description}</p>
       </div>
 
       {/* Main two-column layout */}
-      <div className="max-w-6xl mx-auto px-6 py-4 grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="w-full px-8 py-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left column */}
         <div className="flex flex-col gap-4">
           <Card>
