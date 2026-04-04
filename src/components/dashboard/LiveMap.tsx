@@ -113,7 +113,6 @@ export default function LiveMap({ city, reports, newestId, t }: Props) {
   const facilityLayerRef = useRef<L.LayerGroup | null>(null)
 
   const [facilities, setFacilities]   = useState<FacilityPin[]>([])
-  const [apiError, setApiError]       = useState(false)
   const [layers, setLayers]           = useState<LayerToggles>({
     reports: true, hospitals: true, shelters: true, mosques: true, coverage: false,
   })
@@ -138,7 +137,6 @@ export default function LiveMap({ city, reports, newestId, t }: Props) {
     setFacilities([])
     fetchFacilities(city).then((pins) => {
       setFacilities(pins)
-      if (pins.length === (FALLBACK_FACILITIES[city.id]?.length ?? 0)) setApiError(true)
     })
 
     return () => { map.remove(); mapRef.current = null }
@@ -188,19 +186,10 @@ export default function LiveMap({ city, reports, newestId, t }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {apiError && (
-        <div style={{
-          background: 'rgba(230,168,23,0.12)', border: '1px solid rgba(230,168,23,0.4)',
-          borderRadius: 10, padding: '6px 12px', fontSize: 11, color: '#92580d', fontWeight: 500,
-        }}>
-          {t('map.error')}
-        </div>
-      )}
-
       {/* Layer toggles */}
-      <div className="glass-card" style={{ borderRadius: 14, padding: '8px 14px', display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="glass-card" style={{ borderRadius: 14, padding: '8px 14px', display: 'flex', gap: 12, flexWrap: 'nowrap', overflowX: 'auto', alignItems: 'center' }}>
         {(Object.keys(layers) as (keyof LayerToggles)[]).map((key) => (
-          <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer', fontSize: 12, color: '#1a2734', fontWeight: 500 }}>
+          <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer', fontSize: 12, color: '#1a2734', fontWeight: 500, whiteSpace: 'nowrap' }}>
             <input
               type="checkbox"
               checked={layers[key]}

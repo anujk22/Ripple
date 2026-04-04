@@ -235,34 +235,35 @@ export default function CobeGlobe({
                 bottom: "calc(100% + 10px)",
                 left: "50%",
                 transform: "translateX(-50%)",
-                background: "rgba(26,39,52,0.95)",
-                backdropFilter: "blur(8px)",
-                color: "#fff",
+                background: "rgba(255,255,255,0.85)",
+                backdropFilter: "blur(12px)",
+                color: "#1a2734",
                 fontSize: "11px",
                 fontWeight: 600,
-                padding: "7px 12px",
-                borderRadius: 10,
+                padding: "8px 14px",
+                borderRadius: 12,
                 whiteSpace: "nowrap",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
-                border: "1px solid rgba(255,255,255,0.1)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+                border: "1px solid rgba(0,0,0,0.06)",
                 pointerEvents: "none",
                 animation: "tooltipFade 0.15s ease-out",
+                fontFamily: 'Inter, system-ui, sans-serif'
               }}>
                 <div style={{ marginBottom: 3, display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span>{ALERT_DOTS[alertLevel]}</span>
-                  <span style={{ fontWeight: 700 }}>{dot.name}</span>
+                  <span style={{ fontSize: 10 }}>{ALERT_DOTS[alertLevel]}</span>
+                  <span style={{ fontWeight: 700, fontSize: 13 }}>{dot.name}</span>
                 </div>
                 {status.active > 0 ? (
-                  <div style={{ color: '#94a3b8', fontSize: 10 }}>
-                    {status.active} active
+                  <div style={{ color: '#6b7280', fontSize: 11, marginTop: 2 }}>
+                    <span style={{ fontWeight: 600, color: '#1a2734' }}>{status.active}</span> active
                     {status.critical > 0 && (
                       <span style={{ color: '#e05252', fontWeight: 700 }}> · {status.critical} critical</span>
                     )}
                   </div>
                 ) : (
-                  <div style={{ color: '#3d8b85', fontSize: 10 }}>All clear</div>
+                  <div style={{ color: '#3d8b85', fontSize: 11, fontWeight: 600 }}>All clear</div>
                 )}
-                <div style={{ color: '#475569', fontSize: 10, marginTop: 2 }}>Click to open dashboard</div>
+                <div style={{ color: '#9ca3af', fontSize: 10, marginTop: 4, fontWeight: 500 }}>Click to open dashboard</div>
               </div>
             )}
 
@@ -273,17 +274,18 @@ export default function CobeGlobe({
                 bottom: "calc(100% + 10px)",
                 left: "50%",
                 transform: "translateX(-50%)",
-                background: "#1a1a2e",
-                color: "#fff",
-                fontSize: "0.6rem",
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                padding: "0.3rem 0.7rem",
-                borderRadius: 5,
+                background: "rgba(255,255,255,0.85)",
+                backdropFilter: "blur(12px)",
+                color: "#1a2734",
+                fontSize: "12px",
+                fontWeight: 700,
+                padding: "6px 12px",
+                borderRadius: 8,
                 whiteSpace: "nowrap",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(0,0,0,0.06)",
                 pointerEvents: "none",
+                fontFamily: 'Inter, system-ui, sans-serif'
               }}>
                 {dot.name}
               </div>

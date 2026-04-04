@@ -63,10 +63,10 @@ export default function App() {
           <div className="flex flex-col items-center justify-center min-h-screen">
             <div className="text-center z-10 flex flex-col items-center px-4 -mt-16">
               <img src="/1ripple.png" alt="Ripple Logo" className="h-[4.5rem] md:h-[6rem] w-auto mb-3 object-contain" />
-              <p className="text-[15px] font-semibold text-[#1a2734] mb-1">
+              <p className="text-[#132A13] opacity-90 font-semibold tracking-tight text-[17px] md:text-[20px] mt-4 w-full md:max-w-3xl mx-auto">
                 Every humanitarian decision creates ripples. See where yours land.
               </p>
-              <p className="text-sm font-medium text-[#4b5563] mb-8 tracking-wide">
+              <p className="text-[#36454F] font-medium text-[15px] mt-3 mb-8 w-full md:max-w-xl mx-auto leading-relaxed px-4">
                 Click a city to open its triage dashboard.
               </p>
             </div>

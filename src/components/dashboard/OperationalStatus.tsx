@@ -98,12 +98,12 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
 
       {/* Card 1 — Readiness Ring */}
       <div className="glass-card" style={{ borderRadius: 20, padding: 18 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', color: '#6b7280', textTransform: 'uppercase', marginBottom: 14 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#1a2734', textTransform: 'uppercase', marginBottom: 14 }}>
           {t('dash.readiness')}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <svg width="130" height="130" viewBox="0 0 84 84">
-            <circle cx="42" cy="42" r="38" fill="none" stroke="#e8e8e8" strokeWidth="8" />
+            <circle cx="42" cy="42" r="38" fill="none" stroke="rgba(255, 255, 255, 0.9)" strokeWidth="8" />
             <circle
               cx="42" cy="42" r="38"
               fill="none"
@@ -124,10 +124,10 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
               {label}
             </text>
           </svg>
-          <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.15em', color: '#9ca3af', textTransform: 'uppercase', marginTop: 4 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: '#36454F', textTransform: 'uppercase', marginTop: 4 }}>
             HUMANITARIAN READINESS INDEX
           </div>
-          <div style={{ fontSize: 10, color: '#9ca3af', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2, fontWeight: 500 }}>
             Field report data · illustrative
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
 
       {/* Card 2 — Resources */}
       <div className="glass-card" style={{ borderRadius: 20, padding: 18 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', color: '#6b7280', textTransform: 'uppercase', marginBottom: 14 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#1a2734', textTransform: 'uppercase', marginBottom: 14 }}>
           {t('dash.resources')}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -147,10 +147,10 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
             return (
               <div key={res.label}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ fontSize: 12, fontWeight: 500, color: '#1a2734', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1a2734', display: 'flex', alignItems: 'center', gap: 6 }}>
                     {res.icon} {res.label}
                   </span>
-                  <span style={{ fontSize: 11, color: res.danger ? '#e05252' : '#4b5563', fontWeight: res.danger ? 700 : 400 }}>
+                  <span style={{ fontSize: 12, color: res.danger ? '#e05252' : '#36454F', fontWeight: res.danger ? 700 : 500 }}>
                     {res.display}
                   </span>
                 </div>
@@ -170,7 +170,7 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
       {/* Card 3 — Incident Briefing */}
       <div className="glass-card" style={{ borderRadius: 20, padding: 18 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', color: '#6b7280', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#1a2734', textTransform: 'uppercase' }}>
             {t('dash.briefing')}
           </span>
           <button onClick={handleCopy} style={{
@@ -203,7 +203,7 @@ export default function OperationalStatus({ city, readiness, active, t, rtl }: P
         {/* Briefing bullets */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
           {briefingLines.map((line, i) => (
-            <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#1a2734', lineHeight: 1.4 }}>
+            <div key={i} style={{ display: 'flex', gap: 8, fontSize: 13, color: '#1a2734', lineHeight: 1.4, fontWeight: 500 }}>
               <span style={{ color: '#3d8b85', fontWeight: 700, flexShrink: 0 }}>●</span>
               <span>{line}</span>
             </div>
