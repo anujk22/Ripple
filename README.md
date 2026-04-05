@@ -1,4 +1,4 @@
-# Ripple <img width="1781" height="1078" alt="image" src="https://github.com/user-attachments/assets/fe712727-929a-43a1-8fa2-eb03e8aea621" />
+# Ripple <img src="https://github.com/user-attachments/assets/fe712727-929a-43a1-8fa2-eb03e8aea621" width="700" alt="Ripple — humanitarian triage platform" />
 
 
 > **🏆 1st Place — Disaster Response Track, Muslim Tech Collaborative Hackathon 2026**
