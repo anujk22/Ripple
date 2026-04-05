@@ -4,7 +4,7 @@
 
 **Every humanitarian decision creates ripples. See where yours land.**
 
-[![Demo Video](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](YOUR_YOUTUBE_LINK_HERE)
+[![Demo Video](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=Os2uTmosXyM&time_continue=0&source_ve_path=NzY3NTg&embeds_referring_euri=https%3A%2F%2Fdevpost.com%2F)
 [![Built With](https://img.shields.io/badge/Built_With-React_+_TypeScript_+_Vite-blue?style=for-the-badge&logo=react)](https://vitejs.dev)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
